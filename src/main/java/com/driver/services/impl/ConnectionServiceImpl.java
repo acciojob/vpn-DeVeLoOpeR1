@@ -120,17 +120,17 @@ public class ConnectionServiceImpl implements ConnectionService {
             System.out.println("communication success and sender and receiver is not connected");
             return sender;
         }
-        if(!sender.getConnected() && receiver.getConnected() && sender.getOriginalCountry().getCode().equals(receiver.getMaskedIp().split(".")[0]) ){
+        if(!sender.getConnected() && receiver.getConnected() && sender.getOriginalCountry().getCode().equals(receiver.getMaskedIp().substring(0,3)) ){
             System.out.println("communication success and sender is not connected and RECEIVER is CONNECTED");
             return sender;
         }
-        if(sender.getConnected() && !receiver.getConnected() && receiver.getOriginalCountry().getCode().equals(sender.getMaskedIp().split(".")[0]) ){
+        if(sender.getConnected() && !receiver.getConnected() && receiver.getOriginalCountry().getCode().equals(sender.getMaskedIp().substring(0,3)) ){
             System.out.println("communication success and SENDER is CONNECTED and RECEIVER is NOT CONNECTED");
             return sender;
         }
         if(sender.getConnected() && receiver.getConnected())
         {
-            if(sender.getMaskedIp().split(".")[0].equals(receiver.getMaskedIp().split(".")[0])){
+            if(sender.getMaskedIp().substring(0,3).equals(receiver.getMaskedIp().substring(0,3))){
 
                 System.out.println("communication success and SENDER is CONNECTED and RECEIVER is CONNECTED");
                 return sender;
@@ -143,7 +143,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         }
         // make a connection request to make a new connection
         if(receiver.getConnected()){
-           sender = connect(senderId,map.get(receiver.getMaskedIp().split(".")[0]));
+           sender = connect(senderId,map.get(receiver.getMaskedIp().substring(0,3)));
         }
         else{
             sender = connect(senderId,map.get(receiver.getOriginalCountry().getCode()));
