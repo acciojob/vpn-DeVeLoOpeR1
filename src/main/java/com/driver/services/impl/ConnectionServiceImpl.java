@@ -55,9 +55,9 @@ public class ConnectionServiceImpl implements ConnectionService {
             throw new Exception("Unable to connect");
         }
         ServiceProvider serviceProvider1 = null;
-        int id = 0;
+        int id = 1000;
         for(ServiceProvider serviceProvider : offerService){
-            if(serviceProvider.getId()>id){
+            if(serviceProvider.getId()<id){
                 serviceProvider1 = serviceProvider;
                 id = serviceProvider.getId();
             }
@@ -114,40 +114,42 @@ public class ConnectionServiceImpl implements ConnectionService {
         map.put("003","AUS");
         map.put("004","CHI");
         map.put("005","JPN");
-        String receiverCurrentCode = null;
-        String[] ip;
-        if(receiver.getConnected()==true)
-        {
-            ip = receiver.getMaskedIp().split(".");
-            receiverCurrentCode = ip[0];
-        }
-        else {
-            ip = receiver.getOriginalIp().split(".");
-            receiverCurrentCode = ip[0];
-        }
 
-        if(sender.getConnected()==true){
-            String[] senIp = sender.getMaskedIp().split(".");
-            if(receiverCurrentCode.equals(senIp[0])){
-                System.out.println("communication establish between both sender and receiver");
-                return sender;
-            }
-            else {
-                System.out.println("No Communication is possible between the both the things ");
-                throw new Exception("Cannot establish communication");
-            }
-        }
-        // sender is not connected
-        String[] ip1 = sender.getOriginalIp().split(".");
-        if(receiverCurrentCode.equals(ip1[0])){
-            System.out.println("communication establish between both sender and receiver");
+        if(!sender.getConnected() && !receiver.getConnected() && sender.getOriginalCountry().getCode().equals(receiver.getOriginalCountry().getCode()))
+        {
+            System.out.println("communication success and sender and receiver is not connected");
             return sender;
         }
-        else{
-            // make a connection request to make a new connection
-            connect(senderId,map.get(receiverCurrentCode));
-            System.out.println("communication establish between both sender and receiver");
+        if(!sender.getConnected() && receiver.getConnected() && sender.getOriginalCountry().getCode().equals(receiver.getMaskedIp().split(".")[0]) ){
+            System.out.println("communication success and sender is not connected and RECEIVER is CONNECTED");
+            return sender;
         }
+        if(sender.getConnected() && !receiver.getConnected() && receiver.getOriginalCountry().getCode().equals(sender.getMaskedIp().split(".")[0]) ){
+            System.out.println("communication success and SENDER is CONNECTED and RECEIVER is NOT CONNECTED");
+            return sender;
+        }
+        if(sender.getConnected() && receiver.getConnected())
+        {
+            if(sender.getMaskedIp().split(".")[0].equals(receiver.getMaskedIp().split(".")[0])){
+
+                System.out.println("communication success and SENDER is CONNECTED and RECEIVER is CONNECTED");
+                return sender;
+            }
+            else{
+                System.out.println("communication establish between both sender and receiver");
+                throw new Exception("Cannot establish communication");
+            }
+
+        }
+        // make a connection request to make a new connection
+        if(receiver.getConnected()){
+           sender = connect(senderId,map.get(receiver.getMaskedIp().split(".")[0]));
+        }
+        else{
+            sender = connect(senderId,map.get(receiver.getOriginalCountry().getCode()));
+        }
+
+        System.out.println("communication establish by changing the SENDER VALUES TO BE THERE");
         return sender;
 
     }
