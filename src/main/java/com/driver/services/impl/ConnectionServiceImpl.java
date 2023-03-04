@@ -142,11 +142,17 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         }
         // make a connection request to make a new connection
-        if(receiver.getConnected()){
-           sender = connect(senderId,map.get(receiver.getMaskedIp().substring(0,3)));
+        try {
+            if (receiver.getConnected()) {
+                sender = connect(senderId, map.get(receiver.getMaskedIp().substring(0, 3)));
+            } else {
+                sender = connect(senderId, map.get(receiver.getOriginalCountry().getCode()));
+            }
         }
-        else{
-            sender = connect(senderId,map.get(receiver.getOriginalCountry().getCode()));
+        catch (Exception e){
+
+            System.out.println("ERROR FROM THE SENDER CONNECTION WAY NO COMMUNICATION IS POSSIBLE");
+            throw new Exception("Cannot establish communication");
         }
 
         System.out.println("communication establish by changing the SENDER VALUES TO BE THERE");
