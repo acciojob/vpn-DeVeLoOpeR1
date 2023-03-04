@@ -34,8 +34,8 @@ public class ConnectionServiceImpl implements ConnectionService {
         map.put("CHI","004");
         map.put("JPN","005");
         countryName = countryName.toUpperCase();
-        if(map.get(countryName).equals(user.getCountry().getCode())){
-            System.out.println(user.getCountry().getCountryName()+" same is equal to both");
+        if(map.get(countryName).equals(user.getOriginalCountry().getCode())){
+            System.out.println(user.getOriginalCountry().getCountryName()+" same is equal to both");
             return user;
         }
         // now check the service provider which provide vpn this country
